@@ -1,31 +1,42 @@
 const router = require('express').Router();
-const { User, Post } = require('../models');
+const { User, Post, Comment } = require('../models');
 
 router.get('/', async (req, res) => {
 
   try {
-    const postData = await Post.findAll({
+    const posts = await Post.findAll({
       limit: 5,
     });
+
+    const postUserIds = posts.map(post => post.user_id);
+    const userIdSet = [...new Set(postUserIds)];
+    const uniqueUsers = [...userIdSet];
+
+    // console.log(uniqueUsers);
   
-    const posts = postData.map(post => {
-      const userName = await User.findOne({
-        where: {
-          id: post.user_id,
-        },
-        attributes: {
-          exclude: ['password'],
-        },
-      });
+    const users = await User.findAll({
+      where: {
+        id: [uniqueUsers],
+      },
+      attributes: {
+        exclude: ['password'],
+      },
+    });
+    
+    const postUserArr = posts.map(post => {
+      const thisUser = users.find(user => user.id === post.user_id);
       return {
-        title,
-        body,
-        userName,
+        userName: thisUser.userName,
+        title: post.title,
+        body: post.body,
       }
     });
+
+    // console.log(postUserArr);
   
-    res.render('homepage', {
-      posts,
+    res.status(200).render('homepage', {
+      postUserArr,
+      logged_in: req.session.logged_in,
     });
 
   } catch (error) {
@@ -33,29 +44,114 @@ router.get('/', async (req, res) => {
   };
 });
 
-router.get('/:userName', async (req, res) => {
+router.get('/login', (req, res) => {
+  res.render('login');
+});
 
-  try {
-    // const user = await User.findOne({
-    //   where: {
-    //     userName: req.params.userName,
-    //   },
-    // });
+router.get('/signup', (req, res) => {
+  res.render('signup');
+})
 
-    const posts = await Post.findAll({
-      where: {
-        user_id: req.session.id,
-      },
-    });
+router.get('/dashboard', async (req, res) => {
+  const user = req.session.userName;
+  if (user) {
+    try {
+      
+      const user = await User.findOne({
+        where: {
+          userName: req.session.userName,
+        },
+      });
 
-    res.render('dashboard', {
-      posts,
-    });
+      const posts = await Post.findAll({
+        where: {
+          user_id: user.id,
+        },
+      });
 
-  } catch (error) {
-    res.status(500).json(error);
+      // console.log(posts);
+
+      res.render('dashboard', {
+        userName: req.session.userName,
+        posts,
+      });
+
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  } else {
+    res.render('login');
   }
 });
 
+router.post('/logout', (req, res) => {
+  if (req.session.logged_in) {
+    req.session.destroy(() => {
+      res.status(204).end();
+    });
+  } else {
+    res.status(404).end();
+  }
+});
+
+router.get('/new-post', (req, res) => {
+  res.render('newpost');
+});
+
+router.get('/:postTitle', async (req, res) => {
+  const post = await Post.findOne({
+    where: {
+      title: req.params.postTitle,
+    },
+  });
+
+  // console.log(post);
+
+  const postUser = await User.findOne({
+    where: {
+      id: post.user_id,
+    },
+  });
+  
+  // console.log(postUser);
+
+  const comments = await Comment.findAll({
+    where: {
+      post_id: post.id,
+    },
+  });
+
+  // console.log(comments);
+  
+  // remove duplicate values so duplicate results are not returned from User.findAll()
+  const userIds = comments.map(comment => comment.user_id);
+  const userIdSet = [...new Set(userIds)];
+  const uniqueUserIds = [...userIdSet];
+
+  const users = await User.findAll({
+    where: {
+      id: [uniqueUserIds],
+    },
+    attributes: {
+      exclude: ['password'],
+    },
+  });
+
+  // pair comment bodies with the userName of the user that submitted them
+  const commentUserArr = comments.map(comment => {
+    const thisUser = users.find(user => user.id === comment.user_id);
+    return {
+      userName: thisUser.userName,
+      commentBody: comment.body,
+    }
+  });
+
+  res.render('postwithcomments', {
+    postTitle: post.title,
+    postBody: post.body,
+    postUser: postUser.userName,
+    usersAndComments: commentUserArr,
+  });
+});
 
 module.exports = router;

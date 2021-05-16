@@ -6,8 +6,7 @@ const renderPost = (event) => {
     method: 'GET'
   });
 
-  
-}
+};
 
 document
   .querySelector('.post-title')

@@ -1,0 +1,19 @@
+<div class="fs-2 mb-3">{{postUser}}: <span id="post-title">{{postTitle}}</span></div>
+<div>{{postBody}}</div>
+
+<div class="input-group my-3" style="max-width: 50%">
+  <input type="text" class="form-control" id="comment-text" placeholder="Type A Comment" aria-label="Comment" aria-describedby="comment-text">
+</div>
+<button class="btn text-light bg-dark" id="new-comment">Submit Comment</button>
+{{#each usersAndComments as |uc| }}
+<div class="row text-center mb-5">
+  <div class="card col-md-6 offset-md-3 px-0">
+    <div class="card-header">{{uc.userName}}</div>
+    <div class="card-body">
+      {{uc.commentBody}}
+    </div>
+  </div>
+</div>
+{{/each}}
+
+<script src="/js/newcomment.js"></script>

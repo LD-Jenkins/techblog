@@ -1,6 +1,5 @@
-const signUpHandler = async (event) => {
-  event.preventDefault();
-
+const signUpHandler = async () => {
+ 
   const userName = document.querySelector('#signup-user').value.trim();
   const password = document.querySelector('#signup-password').value.trim();
 
@@ -12,9 +11,11 @@ const signUpHandler = async (event) => {
     });
 
     if (response.ok) {
-      document.location.replace(`/${userName}`);
+      document.location.assign('/dashboard');
+    } else {
+      document.querySelector('#error-message').innerHTML = 'Invalid username or that username is already taken';
     }
-  }
+  };
 };
 
 document

@@ -4,27 +4,23 @@ const loginHandler = async (event) => {
   const userName = document.querySelector('#login-user').value.trim();
   const password = document.querySelector('#login-password').value.trim();
 
-  if (userName && password) {
-    const response = await fetch('/api/users/login', {
-      method: 'POST',
-      body: JSON.stringify({ userName, password }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+  
+  const response = await fetch('/api/users/login', {
+    method: 'POST',
+    body: JSON.stringify({ userName, password }),
+    headers: { 'Content-Type': 'application/json' },
+  });
 
-    if (response.ok) {
-      document.location.replace(`/${userName}`);
-    }
+  // console.log(response.message);
+
+  if (response.ok) {
+    document.location.replace(`/dashboard`);
+  } else {
+    document.querySelector('#error-message').innerHTML = 'Incorrect email or password, please try again';
   }
-};
-
-const signUpRedirect = () => {
-  document.location.replace('/api/users/signup');
+  
 };
 
 document
   .querySelector('#login-btn')
   .addEventListener('click', loginHandler);
-
-document
-  .querySelector('#signup-btn')
-  .addEventListener('click', signUpRedirect);
