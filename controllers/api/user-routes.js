@@ -10,7 +10,11 @@ router.post('/login', async (req, res) => {
       },
     });
 
-    await user.checkPassword(req.body.password);
+    const checkPass = await user.checkPassword(req.body.password);
+
+    if (!user || !checkPass) {
+      res.status(400).end();
+    }
 
     req.session.save(() => {
       req.session.userName = user.userName;

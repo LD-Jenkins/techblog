@@ -5,7 +5,7 @@
 {{#each posts as |post| }}
 <div class="row text-center mb-5">
   <div class="card col-md-6 offset-md-3 px-0">
-    <a href="/{{post.dataValues.title}}" style="text-decoration: none;"><div class="card-header">{{post.dataValues.title}}</div></a>
+    <a href="/posts/{{post.dataValues.title}}" style="text-decoration: none;"><div class="card-header">{{post.dataValues.title}}</div></a>
     <div class="card-body">
       {{post.dataValues.body}}
     </div>

@@ -16,15 +16,16 @@ router.get('/', async (req, res) => {
   
     const users = await User.findAll({
       where: {
-        id: [uniqueUsers],
+        id: uniqueUsers,
       },
       attributes: {
         exclude: ['password'],
       },
     });
-    
+    // console.log(users);
     const postUserArr = posts.map(post => {
       const thisUser = users.find(user => user.id === post.user_id);
+      // console.log(thisUser, thisUser.userName);
       return {
         userName: thisUser.userName,
         title: post.title,
@@ -40,6 +41,7 @@ router.get('/', async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   };
 });
@@ -98,13 +100,17 @@ router.get('/new-post', (req, res) => {
   res.render('newpost');
 });
 
-router.get('/:postTitle', async (req, res) => {
+router.get('/posts/:postTitle', async (req, res) => {
+
+  // if (req.params.postTitle === 'favicon.ico') {
+  //   res.end();
+  // };
+
   const post = await Post.findOne({
     where: {
       title: req.params.postTitle,
     },
   });
-
   // console.log(post);
 
   const postUser = await User.findOne({
@@ -112,6 +118,11 @@ router.get('/:postTitle', async (req, res) => {
       id: post.user_id,
     },
   });
+
+  let sameUserPost;
+  if (postUser.id === post.user_id) {
+    sameUserPost = true;
+  }
   
   // console.log(postUser);
 
@@ -120,6 +131,11 @@ router.get('/:postTitle', async (req, res) => {
       post_id: post.id,
     },
   });
+
+  let hasComments;
+  if (!comments) {
+    hasComments = false;
+  };
 
   // console.log(comments);
   
@@ -140,9 +156,11 @@ router.get('/:postTitle', async (req, res) => {
   // pair comment bodies with the userName of the user that submitted them
   const commentUserArr = comments.map(comment => {
     const thisUser = users.find(user => user.id === comment.user_id);
+    const sameUser = thisUser.userName === req.session.userName;
     return {
       userName: thisUser.userName,
       commentBody: comment.body,
+      sameUser,
     }
   });
 
@@ -151,6 +169,8 @@ router.get('/:postTitle', async (req, res) => {
     postBody: post.body,
     postUser: postUser.userName,
     usersAndComments: commentUserArr,
+    hasComments,
+    sameUserPost,
   });
 });
 

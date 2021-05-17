@@ -1,7 +1,7 @@
 {{#each postUserArr as |post| }}
 <div class="row text-center mb-5">
   <div class="card col-md-6 offset-md-3 px-0">
-    <a class="card-header text-primary" style="text-decoration: none;" href="/{{post.title}}">{{post.userName}}: {{post.title}}</a>
+    <a class="card-header text-primary" style="text-decoration: none;" href="/posts/{{post.title}}">{{post.userName}}: {{post.title}}</a>
     <div class="card-body">
       {{post.body}}
     </div>

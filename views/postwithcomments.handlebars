@@ -1,15 +1,28 @@
-<div class="fs-2 mb-3">{{postUser}}: <span id="post-title">{{postTitle}}</span></div>
-<div>{{postBody}}</div>
+<div class="fs-2 mb-3">{{postUser}}: <span id="post-title">{{postTitle}}</span>
+{{#if sameUserPost}}
+  <div style="position: absolute; right: 1rem; top: 5rem;">
+    <button class="text-danger" id="delete-post" style="font-size: 1.5rem; border: none; background: none; padding: 0;">Delete Post <i class="text-dark fas fa-trash-alt"></i></button>
+  </div>
+{{/if}}
+</div>
+<div style="border-style: solid; border-color: lightgrey; max-width: 50rem; min-height: 20rem; padding: .5rem;">{{postBody}}</div>
 
 <div class="input-group my-3" style="max-width: 50%">
   <input type="text" class="form-control" id="comment-text" placeholder="Type A Comment" aria-label="Comment" aria-describedby="comment-text">
 </div>
 <button class="btn text-light bg-dark" id="new-comment">Submit Comment</button>
 {{#each usersAndComments as |uc| }}
-<div class="row text-center mb-5">
+<div class="row text-center my-3">
   <div class="card col-md-6 offset-md-3 px-0">
-    <div class="card-header">{{uc.userName}}</div>
-    <div class="card-body">
+    <div class="card-header">
+      {{uc.userName}}
+      {{#if uc.sameUser}}
+        <div style="position: absolute; right: .5rem; top: .5rem;">
+          <button id="delete-comment" style="border: none; background: none; padding: 0;"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      {{/if}}
+    </div>
+    <div class="card-body" id="posted-comment-body">
       {{uc.commentBody}}
     </div>
   </div>
@@ -17,3 +30,6 @@
 {{/each}}
 
 <script src="/js/newcomment.js"></script>
+{{#if hasComments}}
+<script src="/js/deletecomment.js"></script>
+{{/if}}

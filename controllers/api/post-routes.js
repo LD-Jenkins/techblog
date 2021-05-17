@@ -24,4 +24,21 @@ router.post('/new-post', async (req, res) => {
   
 });
 
+router.post('/delete', async (req, res) => {
+
+  try {
+    
+    Post.destroy({
+      where: {
+        title: req.body.postTitle,
+      },
+    });
+
+    res.render('homepage');
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 module.exports = router;
