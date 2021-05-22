@@ -1,13 +1,15 @@
-const deleteComment = async () => {
-
+const deleteComment = async (event) => {
+  event.preventDefault();
   // console.log("in delete comment");
   const postTitle = document.querySelector('#post-title').innerText;
-  const commentBody = document.querySelector('#posted-comment-body').innerText;
+  const commentBody = event.target.closest('#card-div').lastElementChild.innerText;
+  console.log(commentBody);
+  const commentUser = document.querySelector('#comment-user').innerText;
   // console.log(commentBody);
 
-  const response = await fetch('../api/comments/delete', {
-    method: 'POST',
-    body: JSON.stringify({ commentBody, postTitle }),
+  const response = await fetch('/api/comments/delete', {
+    method: 'DELETE',
+    body: JSON.stringify({ commentBody, postTitle, commentUser }),
     headers: { 'Content-Type': 'application/json' },
   });
 
@@ -17,6 +19,6 @@ const deleteComment = async () => {
 
 };
 
-document
-  .querySelector('#delete-comment')
-  .addEventListener('click', deleteComment);
+const deleteBtns = document.querySelectorAll('#delete-comment');
+
+deleteBtns.forEach(btn => btn.addEventListener('click', deleteComment));

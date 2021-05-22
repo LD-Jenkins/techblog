@@ -8,7 +8,7 @@ const newCommentHandler = async () => {
   document.querySelector('#comment-text').value = '';
   // console.log(postTitle);
 
-  const response = await fetch('../api/comments/new-comment', {
+  const response = await fetch('/api/comments/newcomment', {
     method: 'POST',
     body: JSON.stringify({ commentBody, postTitle }),
     headers: { 'Content-Type': 'application/json' },

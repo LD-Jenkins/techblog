@@ -14,7 +14,7 @@ const loginHandler = async (event) => {
   // console.log(response.message);
 
   if (response.ok) {
-    document.location.replace(`/dashboard`);
+    window.location.assign(`/dashboard`);
   } else {
     document.querySelector('#error-message').innerText = 'Incorrect email or password, please try again';
   }

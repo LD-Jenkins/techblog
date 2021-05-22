@@ -24,17 +24,19 @@ router.post('/new-post', async (req, res) => {
   
 });
 
-router.post('/delete', async (req, res) => {
+router.delete('/delete', async (req, res) => {
 
   try {
     
-    Post.destroy({
+    await Post.destroy({
       where: {
         title: req.body.postTitle,
       },
     });
 
-    res.render('homepage');
+    res.render('homepage', {
+      logged_in: req.session.logged_in,
+    });
 
   } catch (error) {
     res.status(500).json(error);

@@ -12,17 +12,18 @@ router.post('/login', async (req, res) => {
 
     const checkPass = await user.checkPassword(req.body.password);
 
+    console.log(user, checkPass);
     if (!user || !checkPass) {
       res.status(400).end();
     }
 
-    req.session.save(() => {
+    await req.session.save(() => {
       req.session.userName = user.userName;
       req.session.user_id = user.id;
       req.session.logged_in = true;
-    });
 
-    res.redirect('/dashboard');
+      res.status(200).end();
+    });
 
   } catch(error) {
     // console.log(error);
@@ -40,7 +41,7 @@ router.post('/signup', async (req, res) => {
   if (!user) {
     const newUser = await User.create(req.body);
 
-    req.session.save(() => {
+    await req.session.save(() => {
       req.session.userName = newUser.userName;
       req.session.user_id = newUser.id;
       req.session.logged_in = true;

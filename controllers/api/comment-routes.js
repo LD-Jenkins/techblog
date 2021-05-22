@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../../models');
 
-router.post('/new-comment', async (req, res) => {
+router.post('/newcomment', async (req, res) => {
 
   const newComment = {};
   newComment.body = req.body.commentBody;
@@ -37,9 +37,8 @@ router.post('/new-comment', async (req, res) => {
   
 });
 
-router.post('/delete', async (req, res) => {
+router.delete('/delete', async (req, res) => {
 
-  // console.log(req.body.commentBody, req.body.postTitle);
   try {
     const post = await Post.findOne({
       where: {
@@ -47,10 +46,11 @@ router.post('/delete', async (req, res) => {
       },
     });
   
-    const comment = await Comment.destroy({
+    await Comment.destroy({
       where: {
         body: req.body.commentBody,
         post_id: post.id,
+        user_id: req.session.user_id,
       },
     });
 

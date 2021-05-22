@@ -47,15 +47,20 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', {
+    logged_in: req.session.logged_in,
+  });
 });
 
 router.get('/signup', (req, res) => {
-  res.render('signup');
+  res.render('signup', {
+    logged_in: req.session.logged_in,
+  });
 })
 
 router.get('/dashboard', async (req, res) => {
   const user = req.session.userName;
+
   if (user) {
     try {
       
@@ -76,13 +81,16 @@ router.get('/dashboard', async (req, res) => {
       res.render('dashboard', {
         userName: req.session.userName,
         posts,
+        logged_in: req.session.logged_in,
       });
 
     } catch (error) {
       res.status(500).json(error);
     }
   } else {
-    res.render('login');
+    res.render('login', {
+      logged_in: req.session.logged_in,
+    });
   }
 });
 
@@ -97,7 +105,9 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/new-post', (req, res) => {
-  res.render('newpost');
+  res.render('newpost', {
+    logged_in: req.session.logged_in,
+  });
 });
 
 router.get('/posts/:postTitle', async (req, res) => {
@@ -120,7 +130,7 @@ router.get('/posts/:postTitle', async (req, res) => {
   });
 
   let sameUserPost;
-  if (postUser.id === post.user_id) {
+  if (postUser.id === req.session.user_id) {
     sameUserPost = true;
   }
   
@@ -132,9 +142,9 @@ router.get('/posts/:postTitle', async (req, res) => {
     },
   });
 
-  let hasComments;
-  if (!comments) {
-    hasComments = false;
+  let hasComments = false;
+  if (comments) {
+    hasComments = true;
   };
 
   // console.log(comments);
@@ -146,7 +156,7 @@ router.get('/posts/:postTitle', async (req, res) => {
 
   const users = await User.findAll({
     where: {
-      id: [uniqueUserIds],
+      id: uniqueUserIds,
     },
     attributes: {
       exclude: ['password'],
@@ -165,6 +175,7 @@ router.get('/posts/:postTitle', async (req, res) => {
   });
 
   res.render('postwithcomments', {
+    logged_in: req.session.logged_in,
     postTitle: post.title,
     postBody: post.body,
     postUser: postUser.userName,

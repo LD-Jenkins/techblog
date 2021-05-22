@@ -1,4 +1,4 @@
-<div class="fs-2 mb-3">{{postUser}}: <span id="post-title">{{postTitle}}</span>
+<div class="fs-2 mb-3" id="post-user">{{postUser}}: <span id="post-title">{{postTitle}}</span>
 {{#if sameUserPost}}
   <div style="position: absolute; right: 1rem; top: 5rem;">
     <button class="text-danger" id="delete-post" style="font-size: 1.5rem; border: none; background: none; padding: 0;">Delete Post <i class="text-dark fas fa-trash-alt"></i></button>
@@ -13,8 +13,8 @@
 <button class="btn text-light bg-dark" id="new-comment">Submit Comment</button>
 {{#each usersAndComments as |uc| }}
 <div class="row text-center my-3">
-  <div class="card col-md-6 offset-md-3 px-0">
-    <div class="card-header">
+  <div class="card col-md-6 offset-md-3 px-0" id="card-div">
+    <div class="card-header" id="comment-user">
       {{uc.userName}}
       {{#if uc.sameUser}}
         <div style="position: absolute; right: .5rem; top: .5rem;">
@@ -29,6 +29,9 @@
 </div>
 {{/each}}
 
+{{#if sameUserPost}}
+<script src="/js/deletepost.js"></script>
+{{/if}}
 <script src="/js/newcomment.js"></script>
 {{#if hasComments}}
 <script src="/js/deletecomment.js"></script>
